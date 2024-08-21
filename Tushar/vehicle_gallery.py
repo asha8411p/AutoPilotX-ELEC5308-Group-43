@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -27,15 +25,12 @@ import random
 
 
 def get_transform(vehicle_location, angle, d=6.4):
-    start_time = time.time()
     a = math.radians(angle)
     location = carla.Location(d * math.cos(a), d * math.sin(a), 2.0) + vehicle_location
     return carla.Transform(location, carla.Rotation(yaw=180 + angle, pitch=-15))
 
 
-    print('get_transform took', time.time() - start_time, 'seconds')
 def main():
-    start_time = time.time()
     client = carla.Client('localhost', 2000)
     client.set_timeout(2.0)
     world = client.get_world()
@@ -63,7 +58,6 @@ def main():
             vehicle.destroy()
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     main()

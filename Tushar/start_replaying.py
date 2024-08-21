@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -26,7 +24,6 @@ import argparse
 
 
 def main():
-    start_time = time.time()
 
     argparser = argparse.ArgumentParser(
         description=__doc__)
@@ -42,15 +39,38 @@ def main():
         type=int,
         help='TCP port to listen to (default: 2000)')
     argparser.add_argument(
-        '-f', '--recorder_filename',
-        metavar='F',
-        default="test1.rec",
-        help='recorder filename (test1.rec)')
+        '-s', '--start',
+        metavar='S',
+        default=0.0,
+        type=float,
+        help='starting time (default: 0.0)')
     argparser.add_argument(
-        '-t', '--types',
-        metavar='T',
-        default="aa",
-        help='pair of types (a=any, h=hero, v=vehicle, w=walkers, t=trafficLight, o=others')
+        '-d', '--duration',
+        metavar='D',
+        default=0.0,
+        type=float,
+        help='duration (default: 0.0)')
+    argparser.add_argument(
+        '-f', '--recorder-filename',
+        metavar='F',
+        default="test1.log",
+        help='recorder filename (test1.log)')
+    argparser.add_argument(
+        '-c', '--camera',
+        metavar='C',
+        default=0,
+        type=int,
+        help='camera follows an actor (ex: 82)')
+    argparser.add_argument(
+        '-x', '--time-factor',
+        metavar='X',
+        default=1.0,
+        type=float,
+        help='time factor (default 1.0)')
+    argparser.add_argument(
+        '-i', '--ignore-hero',
+        action='store_true',
+        help='ignore hero vehicles')
     args = argparser.parse_args()
 
     try:
@@ -58,18 +78,19 @@ def main():
         client = carla.Client(args.host, args.port)
         client.set_timeout(60.0)
 
-        # types pattern samples:
-        # -t aa == any to any == show every collision (the default)
-        # -t vv == vehicle to vehicle == show every collision between vehicles only
-        # -t vt == vehicle to traffic light == show every collision between a vehicle and a traffic light
-        # -t hh == hero to hero == show collision between a hero and another hero
-        print(client.show_recorder_collisions(args.recorder_filename, args.types[0], args.types[1]))
+        # set the time factor for the replayer
+        client.set_replayer_time_factor(args.time_factor)
+
+        # set to ignore the hero vehicles or not
+        client.set_replayer_ignore_hero(args.ignore_hero)
+
+        # replay the session
+        print(client.replay_file(args.recorder_filename, args.start, args.duration, args.camera))
 
     finally:
         pass
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     try:

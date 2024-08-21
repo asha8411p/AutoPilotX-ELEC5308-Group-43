@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -26,7 +24,6 @@ import argparse
 
 
 def main():
-    start_time = time.time()
 
     argparser = argparse.ArgumentParser(
         description=__doc__)
@@ -47,17 +44,9 @@ def main():
         default="test1.rec",
         help='recorder filename (test1.rec)')
     argparser.add_argument(
-        '-t', '--time',
-        metavar='T',
-        default="30",
-        type=float,
-        help='minimum time to consider it is blocked')
-    argparser.add_argument(
-        '-d', '--distance',
-        metavar='D',
-        default="100",
-        type=float,
-        help='minimum distance to consider it is not moving (in cm)')
+        '-a', '--show_all',
+        action='store_true',
+        help='show detailed info about all frames content')
     args = argparser.parse_args()
 
     try:
@@ -65,13 +54,12 @@ def main():
         client = carla.Client(args.host, args.port)
         client.set_timeout(60.0)
 
-        print(client.show_recorder_actors_blocked(args.recorder_filename, args.time, args.distance))
+        print(client.show_recorder_file_info(args.recorder_filename, args.show_all))
 
     finally:
         pass
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     try:

@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -26,7 +24,6 @@ import argparse
 
 
 def main():
-    start_time = time.time()
 
     argparser = argparse.ArgumentParser(
         description=__doc__)
@@ -47,9 +44,10 @@ def main():
         default="test1.rec",
         help='recorder filename (test1.rec)')
     argparser.add_argument(
-        '-a', '--show_all',
-        action='store_true',
-        help='show detailed info about all frames content')
+        '-t', '--types',
+        metavar='T',
+        default="aa",
+        help='pair of types (a=any, h=hero, v=vehicle, w=walkers, t=trafficLight, o=others')
     args = argparser.parse_args()
 
     try:
@@ -57,13 +55,17 @@ def main():
         client = carla.Client(args.host, args.port)
         client.set_timeout(60.0)
 
-        print(client.show_recorder_file_info(args.recorder_filename, args.show_all))
+        # types pattern samples:
+        # -t aa == any to any == show every collision (the default)
+        # -t vv == vehicle to vehicle == show every collision between vehicles only
+        # -t vt == vehicle to traffic light == show every collision between a vehicle and a traffic light
+        # -t hh == hero to hero == show collision between a hero and another hero
+        print(client.show_recorder_collisions(args.recorder_filename, args.types[0], args.types[1]))
 
     finally:
         pass
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     try:

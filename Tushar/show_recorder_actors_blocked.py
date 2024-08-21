@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -26,7 +24,6 @@ import argparse
 
 
 def main():
-    start_time = time.time()
 
     argparser = argparse.ArgumentParser(
         description=__doc__)
@@ -42,38 +39,22 @@ def main():
         type=int,
         help='TCP port to listen to (default: 2000)')
     argparser.add_argument(
-        '-s', '--start',
-        metavar='S',
-        default=0.0,
-        type=float,
-        help='starting time (default: 0.0)')
-    argparser.add_argument(
-        '-d', '--duration',
-        metavar='D',
-        default=0.0,
-        type=float,
-        help='duration (default: 0.0)')
-    argparser.add_argument(
-        '-f', '--recorder-filename',
+        '-f', '--recorder_filename',
         metavar='F',
-        default="test1.log",
-        help='recorder filename (test1.log)')
+        default="test1.rec",
+        help='recorder filename (test1.rec)')
     argparser.add_argument(
-        '-c', '--camera',
-        metavar='C',
-        default=0,
-        type=int,
-        help='camera follows an actor (ex: 82)')
-    argparser.add_argument(
-        '-x', '--time-factor',
-        metavar='X',
-        default=1.0,
+        '-t', '--time',
+        metavar='T',
+        default="30",
         type=float,
-        help='time factor (default 1.0)')
+        help='minimum time to consider it is blocked')
     argparser.add_argument(
-        '-i', '--ignore-hero',
-        action='store_true',
-        help='ignore hero vehicles')
+        '-d', '--distance',
+        metavar='D',
+        default="100",
+        type=float,
+        help='minimum distance to consider it is not moving (in cm)')
     args = argparser.parse_args()
 
     try:
@@ -81,20 +62,12 @@ def main():
         client = carla.Client(args.host, args.port)
         client.set_timeout(60.0)
 
-        # set the time factor for the replayer
-        client.set_replayer_time_factor(args.time_factor)
-
-        # set to ignore the hero vehicles or not
-        client.set_replayer_ignore_hero(args.ignore_hero)
-
-        # replay the session
-        print(client.replay_file(args.recorder_filename, args.start, args.duration, args.camera))
+        print(client.show_recorder_actors_blocked(args.recorder_filename, args.time, args.distance))
 
     finally:
         pass
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     try:

@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -29,7 +27,6 @@ import logging
 
 
 def main():
-    start_time = time.time()
     argparser = argparse.ArgumentParser(
         description=__doc__)
     argparser.add_argument(
@@ -146,7 +143,6 @@ def main():
         client.stop_recorder()
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     try:

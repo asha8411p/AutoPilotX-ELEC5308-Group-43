@@ -18,7 +18,7 @@ if __name__ == '__main__':
     
     print('Starting...')
 
-    # overal start time
+    # overall start time
     start_time = time.time()
 
     # Create required folders
@@ -44,8 +44,8 @@ if __name__ == '__main__':
         time.sleep(0.01)
     p.join()
 
-    # A bunch of variabled and shared variables used to set all parts of ARTDQN and communicate them
-    duration = Value('d')
+    # A bunch of variables and shared variables used to set all parts of ARTDQN and communicate them
+    duration = Value('d', 0.0)
     episode = Value('L', hparams['episode'] if hparams else 0)
     epsilon = Array('d', hparams['epsilon'] if hparams else [settings.START_EPSILON, settings.EPSILON_DECAY, settings.MIN_EPSILON])
     discount = Value('d', hparams['discount'] if hparams else settings.DISCOUNT)
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     while True:
 
         # If everything is running or carla broke...
-        if stop.value in[STOP.running, STOP.carla_simulator_error, STOP.restarting_carla_simulator, STOP.carla_simulator_restarted]:
+        if stop.value in [STOP.running, STOP.carla_simulator_error, STOP.restarting_carla_simulator, STOP.carla_simulator_restarted]:
 
             # ...and all agents return an error
             if any([state[0] == AGENT_STATE.error for state in agent_stats]):

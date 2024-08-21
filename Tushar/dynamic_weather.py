@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -34,22 +32,16 @@ import math
 
 
 def clamp(value, minimum=0.0, maximum=100.0):
-    start_time = time.time()
     return max(minimum, min(value, maximum))
 
 
-    print('clamp took', time.time() - start_time, 'seconds')
 class Sun(object):
     def __init__(self, azimuth, altitude):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.azimuth = azimuth
         self.altitude = altitude
         self._t = 0.0
 
     def tick(self, delta_seconds):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._t += 0.008 * delta_seconds
         self._t %= 2.0 * math.pi
         self.azimuth += 0.25 * delta_seconds
@@ -57,15 +49,11 @@ class Sun(object):
         self.altitude = (70 * math.sin(self._t)) - 20
 
     def __str__(self):
-    print('__str__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         return 'Sun(alt: %.2f, azm: %.2f)' % (self.altitude, self.azimuth)
 
 
 class Storm(object):
     def __init__(self, precipitation):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._t = precipitation if precipitation > 0.0 else -50.0
         self._increasing = True
         self.clouds = 0.0
@@ -76,8 +64,6 @@ class Storm(object):
         self.fog = 0.0
 
     def tick(self, delta_seconds):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         delta = (1.3 if self._increasing else -1.3) * delta_seconds
         self._t = clamp(delta + self._t, -250.0, 100.0)
         self.clouds = clamp(self._t + 40.0, 0.0, 90.0)
@@ -93,22 +79,16 @@ class Storm(object):
             self._increasing = False
 
     def __str__(self):
-    print('__str__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         return 'Storm(clouds=%d%%, rain=%d%%, wind=%d%%)' % (self.clouds, self.rain, self.wind)
 
 
 class Weather(object):
     def __init__(self, weather):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.weather = weather
         self._sun = Sun(weather.sun_azimuth_angle, weather.sun_altitude_angle)
         self._storm = Storm(weather.precipitation)
 
     def tick(self, delta_seconds):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._sun.tick(delta_seconds)
         self._storm.tick(delta_seconds)
         self.weather.cloudiness = self._storm.clouds
@@ -121,13 +101,10 @@ class Weather(object):
         self.weather.sun_altitude_angle = self._sun.altitude
 
     def __str__(self):
-    print('__str__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         return '%s %s' % (self._sun, self._storm)
 
 
 def main():
-    start_time = time.time()
     argparser = argparse.ArgumentParser(
         description=__doc__)
     argparser.add_argument(
@@ -171,7 +148,6 @@ def main():
             elapsed_time = 0.0
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     main()

@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -27,7 +25,6 @@ import time
 
 
 def main():
-    start_time = time.time()
     actor_list = []
 
     # In this tutorial script, we are going to add a vehicle to the simulation
@@ -126,7 +123,6 @@ def main():
         print('done.')
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     main()

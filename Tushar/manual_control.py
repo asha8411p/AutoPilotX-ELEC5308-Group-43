@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -140,21 +138,17 @@ except ImportError:
 
 
 def find_weather_presets():
-    start_time = time.time()
     rgx = re.compile('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)')
     name = lambda x: ' '.join(m.group(0) for m in rgx.finditer(x))
     presets = [x for x in dir(carla.WeatherParameters) if re.match('[A-Z].+', x)]
     return [(getattr(carla.WeatherParameters, x), name(x)) for x in presets]
 
 
-    print('find_weather_presets took', time.time() - start_time, 'seconds')
 def get_actor_display_name(actor, truncate=250):
-    start_time = time.time()
     name = ' '.join(actor.type_id.replace('_', '.').title().split('.')[1:])
     return (name[:truncate - 1] + u'\u2026') if len(name) > truncate else name
 
 
-    print('get_actor_display_name took', time.time() - start_time, 'seconds')
 # ==============================================================================
 # -- World ---------------------------------------------------------------------
 # ==============================================================================
@@ -162,8 +156,6 @@ def get_actor_display_name(actor, truncate=250):
 
 class World(object):
     def __init__(self, carla_world, hud, args):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.world = carla_world
         self.actor_role_name = args.rolename
         try:
@@ -191,8 +183,6 @@ class World(object):
         self.recording_start = 0
 
     def restart(self):
-    print('restart took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.player_max_speed = 1.589
         self.player_max_speed_fast = 3.713
         # Keep same camera config if the camera manager exists.
@@ -243,8 +233,6 @@ class World(object):
         self.hud.notification(actor_type)
 
     def next_weather(self, reverse=False):
-    print('next_weather took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._weather_index += -1 if reverse else 1
         self._weather_index %= len(self._weather_presets)
         preset = self._weather_presets[self._weather_index]
@@ -252,8 +240,6 @@ class World(object):
         self.player.get_world().set_weather(preset[0])
 
     def toggle_radar(self):
-    print('toggle_radar took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         if self.radar_sensor is None:
             self.radar_sensor = RadarSensor(self.player)
         elif self.radar_sensor.sensor is not None:
@@ -261,26 +247,18 @@ class World(object):
             self.radar_sensor = None
 
     def tick(self, clock):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.hud.tick(self, clock)
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.camera_manager.render(display)
         self.hud.render(display)
 
     def destroy_sensors(self):
-    print('destroy_sensors took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.camera_manager.sensor.destroy()
         self.camera_manager.sensor = None
         self.camera_manager.index = None
 
     def destroy(self):
-    print('destroy took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         if self.radar_sensor is not None:
             self.toggle_radar()
         actors = [
@@ -303,8 +281,6 @@ class World(object):
 class KeyboardControl(object):
     """Class that handles keyboard input."""
     def __init__(self, world, start_in_autopilot):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._autopilot_enabled = start_in_autopilot
         if isinstance(world.player, carla.Vehicle):
             self._control = carla.VehicleControl()
@@ -321,8 +297,6 @@ class KeyboardControl(object):
         world.hud.notification("Press 'H' or '?' for help.", seconds=4.0)
 
     def parse_events(self, client, world, clock):
-    print('parse_events took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         if isinstance(self._control, carla.VehicleControl):
             current_lights = self._lights
         for event in pygame.event.get():
@@ -459,8 +433,6 @@ class KeyboardControl(object):
             world.player.apply_control(self._control)
 
     def _parse_vehicle_keys(self, keys, milliseconds):
-    print('_parse_vehicle_keys took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._control.throttle = 1.0 if keys[K_UP] or keys[K_w] else 0.0
         steer_increment = 5e-4 * milliseconds
         if keys[K_LEFT] or keys[K_a]:
@@ -481,8 +453,6 @@ class KeyboardControl(object):
         self._control.hand_brake = keys[K_SPACE]
 
     def _parse_walker_keys(self, keys, milliseconds, world):
-    print('_parse_walker_keys took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._control.speed = 0.0
         if keys[K_DOWN] or keys[K_s]:
             self._control.speed = 0.0
@@ -500,8 +470,6 @@ class KeyboardControl(object):
 
     @staticmethod
     def _is_quit_shortcut(key):
-    print('_is_quit_shortcut took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         return (key == K_ESCAPE) or (key == K_q and pygame.key.get_mods() & KMOD_CTRL)
 
 
@@ -512,8 +480,6 @@ class KeyboardControl(object):
 
 class HUD(object):
     def __init__(self, width, height):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.dim = (width, height)
         font = pygame.font.Font(pygame.font.get_default_font(), 20)
         font_name = 'courier' if os.name == 'nt' else 'mono'
@@ -532,16 +498,12 @@ class HUD(object):
         self._server_clock = pygame.time.Clock()
 
     def on_world_tick(self, timestamp):
-    print('on_world_tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._server_clock.tick()
         self.server_fps = self._server_clock.get_fps()
         self.frame = timestamp.frame
         self.simulation_time = timestamp.elapsed_seconds
 
     def tick(self, world, clock):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._notifications.tick(world, clock)
         if not self._show_info:
             return
@@ -604,23 +566,15 @@ class HUD(object):
                 self._info_text.append('% 4dm %s' % (d, vehicle_type))
 
     def toggle_info(self):
-    print('toggle_info took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._show_info = not self._show_info
 
     def notification(self, text, seconds=2.0):
-    print('notification took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._notifications.set_text(text, seconds=seconds)
 
     def error(self, text):
-    print('error took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._notifications.set_text('Error: %s' % text, (255, 0, 0))
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         if self._show_info:
             info_surface = pygame.Surface((220, self.dim[1]))
             info_surface.set_alpha(100)
@@ -666,8 +620,6 @@ class HUD(object):
 
 class FadingText(object):
     def __init__(self, font, dim, pos):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.font = font
         self.dim = dim
         self.pos = pos
@@ -675,8 +627,6 @@ class FadingText(object):
         self.surface = pygame.Surface(self.dim)
 
     def set_text(self, text, color=(255, 255, 255), seconds=2.0):
-    print('set_text took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         text_texture = self.font.render(text, True, color)
         self.surface = pygame.Surface(self.dim)
         self.seconds_left = seconds
@@ -684,15 +634,11 @@ class FadingText(object):
         self.surface.blit(text_texture, (10, 11))
 
     def tick(self, _, clock):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         delta_seconds = 1e-3 * clock.get_time()
         self.seconds_left = max(0.0, self.seconds_left - delta_seconds)
         self.surface.set_alpha(500.0 * self.seconds_left)
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         display.blit(self.surface, self.pos)
 
 
@@ -704,8 +650,6 @@ class FadingText(object):
 class HelpText(object):
     """Helper class to handle text output using pygame"""
     def __init__(self, font, width, height):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         lines = __doc__.split('\n')
         self.font = font
         self.line_space = 18
@@ -721,13 +665,9 @@ class HelpText(object):
         self.surface.set_alpha(220)
 
     def toggle(self):
-    print('toggle took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._render = not self._render
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         if self._render:
             display.blit(self.surface, self.pos)
 
@@ -739,8 +679,6 @@ class HelpText(object):
 
 class CollisionSensor(object):
     def __init__(self, parent_actor, hud):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.sensor = None
         self.history = []
         self._parent = parent_actor
@@ -754,8 +692,6 @@ class CollisionSensor(object):
         self.sensor.listen(lambda event: CollisionSensor._on_collision(weak_self, event))
 
     def get_collision_history(self):
-    print('get_collision_history took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         history = collections.defaultdict(int)
         for frame, intensity in self.history:
             history[frame] += intensity
@@ -763,8 +699,6 @@ class CollisionSensor(object):
 
     @staticmethod
     def _on_collision(weak_self, event):
-    print('_on_collision took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self = weak_self()
         if not self:
             return
@@ -784,8 +718,6 @@ class CollisionSensor(object):
 
 class LaneInvasionSensor(object):
     def __init__(self, parent_actor, hud):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.sensor = None
         self._parent = parent_actor
         self.hud = hud
@@ -799,8 +731,6 @@ class LaneInvasionSensor(object):
 
     @staticmethod
     def _on_invasion(weak_self, event):
-    print('_on_invasion took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self = weak_self()
         if not self:
             return
@@ -816,8 +746,6 @@ class LaneInvasionSensor(object):
 
 class GnssSensor(object):
     def __init__(self, parent_actor):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.sensor = None
         self._parent = parent_actor
         self.lat = 0.0
@@ -832,8 +760,6 @@ class GnssSensor(object):
 
     @staticmethod
     def _on_gnss_event(weak_self, event):
-    print('_on_gnss_event took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self = weak_self()
         if not self:
             return
@@ -848,8 +774,6 @@ class GnssSensor(object):
 
 class IMUSensor(object):
     def __init__(self, parent_actor):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.sensor = None
         self._parent = parent_actor
         self.accelerometer = (0.0, 0.0, 0.0)
@@ -867,8 +791,6 @@ class IMUSensor(object):
 
     @staticmethod
     def _IMU_callback(weak_self, sensor_data):
-    print('_IMU_callback took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self = weak_self()
         if not self:
             return
@@ -891,8 +813,6 @@ class IMUSensor(object):
 
 class RadarSensor(object):
     def __init__(self, parent_actor):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.sensor = None
         self._parent = parent_actor
         self.velocity_range = 7.5 # m/s
@@ -914,8 +834,6 @@ class RadarSensor(object):
 
     @staticmethod
     def _Radar_callback(weak_self, radar_data):
-    print('_Radar_callback took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self = weak_self()
         if not self:
             return
@@ -938,8 +856,6 @@ class RadarSensor(object):
                     roll=current_rot.roll)).transform(fw_vec)
 
             def clamp(min_v, max_v, value):
-    print('clamp took', time.time() - start_time, 'seconds')
-    start_time = time.time()
                 return max(min_v, min(value, max_v))
 
             norm_velocity = detect.velocity / self.velocity_range # range [-1, 1]
@@ -960,8 +876,6 @@ class RadarSensor(object):
 
 class CameraManager(object):
     def __init__(self, parent_actor, hud, gamma_correction):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.sensor = None
         self.surface = None
         self._parent = parent_actor
@@ -1007,14 +921,10 @@ class CameraManager(object):
         self.index = None
 
     def toggle_camera(self):
-    print('toggle_camera took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.transform_index = (self.transform_index + 1) % len(self._camera_transforms)
         self.set_sensor(self.index, notify=False, force_respawn=True)
 
     def set_sensor(self, index, notify=True, force_respawn=False):
-    print('set_sensor took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         index = index % len(self.sensors)
         needs_respawn = True if self.index is None else \
             (force_respawn or (self.sensors[index][2] != self.sensors[self.index][2]))
@@ -1036,26 +946,18 @@ class CameraManager(object):
         self.index = index
 
     def next_sensor(self):
-    print('next_sensor took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.set_sensor(self.index + 1)
 
     def toggle_recording(self):
-    print('toggle_recording took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.recording = not self.recording
         self.hud.notification('Recording %s' % ('On' if self.recording else 'Off'))
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         if self.surface is not None:
             display.blit(self.surface, (0, 0))
 
     @staticmethod
     def _parse_image(weak_self, image):
-    print('_parse_image took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self = weak_self()
         if not self:
             return
@@ -1089,7 +991,6 @@ class CameraManager(object):
 
 
 def game_loop(args):
-    start_time = time.time()
     pygame.init()
     pygame.font.init()
     world = None
@@ -1126,14 +1027,12 @@ def game_loop(args):
         pygame.quit()
 
 
-    print('game_loop took', time.time() - start_time, 'seconds')
 # ==============================================================================
 # -- main() --------------------------------------------------------------------
 # ==============================================================================
 
 
 def main():
-    start_time = time.time()
     argparser = argparse.ArgumentParser(
         description='CARLA Manual Control Client')
     argparser.add_argument(
@@ -1195,7 +1094,6 @@ def main():
         print('\nCancelled by user. Bye!')
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     main()

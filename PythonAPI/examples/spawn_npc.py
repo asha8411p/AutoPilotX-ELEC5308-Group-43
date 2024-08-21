@@ -7,7 +7,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 """Spawn NPCs into the simulation"""
-
+import carla
 import glob
 import os
 import sys

@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -52,8 +50,6 @@ class CarlaSyncMode(object):
     """
 
     def __init__(self, world, *sensors, **kwargs):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.world = world
         self.sensors = sensors
         self.frame = None
@@ -62,8 +58,6 @@ class CarlaSyncMode(object):
         self._settings = None
 
     def __enter__(self):
-    print('__enter__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self._settings = self.world.get_settings()
         self.frame = self.world.apply_settings(carla.WorldSettings(
             no_rendering_mode=False,
@@ -71,8 +65,6 @@ class CarlaSyncMode(object):
             fixed_delta_seconds=self.delta_seconds))
 
         def make_queue(register_event):
-    print('make_queue took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             q = queue.Queue()
             register_event(q.put)
             self._queues.append(q)
@@ -83,21 +75,15 @@ class CarlaSyncMode(object):
         return self
 
     def tick(self, timeout):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.frame = self.world.tick()
         data = [self._retrieve_data(q, timeout) for q in self._queues]
         assert all(x.frame == self.frame for x in data)
         return data
 
     def __exit__(self, *args, **kwargs):
-    print('__exit__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.world.apply_settings(self._settings)
 
     def _retrieve_data(self, sensor_queue, timeout):
-    print('_retrieve_data took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         while True:
             data = sensor_queue.get(timeout=timeout)
             if data.frame == self.frame:
@@ -105,7 +91,6 @@ class CarlaSyncMode(object):
 
 
 def draw_image(surface, image, blend=False):
-    start_time = time.time()
     array = np.frombuffer(image.raw_data, dtype=np.dtype("uint8"))
     array = np.reshape(array, (image.height, image.width, 4))
     array = array[:, :, :3]
@@ -116,9 +101,7 @@ def draw_image(surface, image, blend=False):
     surface.blit(image_surface, (0, 0))
 
 
-    print('draw_image took', time.time() - start_time, 'seconds')
 def get_font():
-    start_time = time.time()
     fonts = [x for x in pygame.font.get_fonts()]
     default_font = 'ubuntumono'
     font = default_font if default_font in fonts else fonts[0]
@@ -126,9 +109,7 @@ def get_font():
     return pygame.font.Font(font, 14)
 
 
-    print('get_font took', time.time() - start_time, 'seconds')
 def should_quit():
-    start_time = time.time()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return True
@@ -138,9 +119,7 @@ def should_quit():
     return False
 
 
-    print('should_quit took', time.time() - start_time, 'seconds')
 def main():
-    start_time = time.time()
     actor_list = []
     pygame.init()
 
@@ -218,7 +197,6 @@ def main():
         print('done.')
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
 
     try:

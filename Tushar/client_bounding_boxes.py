@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Aptiv
@@ -82,8 +80,6 @@ class ClientSideBoundingBoxes(object):
 
     @staticmethod
     def get_bounding_boxes(vehicles, camera):
-    print('get_bounding_boxes took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Creates 3D bounding boxes based on carla vehicle list and camera.
         """
@@ -95,8 +91,6 @@ class ClientSideBoundingBoxes(object):
 
     @staticmethod
     def draw_bounding_boxes(display, bounding_boxes):
-    print('draw_bounding_boxes took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Draws bounding boxes on pygame display.
         """
@@ -126,8 +120,6 @@ class ClientSideBoundingBoxes(object):
 
     @staticmethod
     def get_bounding_box(vehicle, camera):
-    print('get_bounding_box took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Returns 3D bounding box for a vehicle based on camera view.
         """
@@ -141,8 +133,6 @@ class ClientSideBoundingBoxes(object):
 
     @staticmethod
     def _create_bb_points(vehicle):
-    print('_create_bb_points took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Returns 3D bounding box for a vehicle.
         """
@@ -161,8 +151,6 @@ class ClientSideBoundingBoxes(object):
 
     @staticmethod
     def _vehicle_to_sensor(cords, vehicle, sensor):
-    print('_vehicle_to_sensor took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Transforms coordinates of a vehicle bounding box to sensor.
         """
@@ -173,8 +161,6 @@ class ClientSideBoundingBoxes(object):
 
     @staticmethod
     def _vehicle_to_world(cords, vehicle):
-    print('_vehicle_to_world took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Transforms coordinates of a vehicle bounding box to world.
         """
@@ -188,8 +174,6 @@ class ClientSideBoundingBoxes(object):
 
     @staticmethod
     def _world_to_sensor(cords, sensor):
-    print('_world_to_sensor took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Transforms world coordinates to sensor.
         """
@@ -201,8 +185,6 @@ class ClientSideBoundingBoxes(object):
 
     @staticmethod
     def get_matrix(transform):
-    print('get_matrix took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Creates matrix from carla transform.
         """
@@ -242,8 +224,6 @@ class BasicSynchronousClient(object):
     """
 
     def __init__(self):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.client = None
         self.world = None
         self.camera = None
@@ -254,8 +234,6 @@ class BasicSynchronousClient(object):
         self.capture = True
 
     def camera_blueprint(self):
-    print('camera_blueprint took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Returns camera blueprint.
         """
@@ -267,8 +245,6 @@ class BasicSynchronousClient(object):
         return camera_bp
 
     def set_synchronous_mode(self, synchronous_mode):
-    print('set_synchronous_mode took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Sets synchronous mode.
         """
@@ -278,8 +254,6 @@ class BasicSynchronousClient(object):
         self.world.apply_settings(settings)
 
     def setup_car(self):
-    print('setup_car took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Spawns actor-vehicle to be controled.
         """
@@ -289,8 +263,6 @@ class BasicSynchronousClient(object):
         self.car = self.world.spawn_actor(car_bp, location)
 
     def setup_camera(self):
-    print('setup_camera took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Spawns actor-camera to be used to render view.
         Sets calibration for client-side boxes rendering.
@@ -308,8 +280,6 @@ class BasicSynchronousClient(object):
         self.camera.calibration = calibration
 
     def control(self, car):
-    print('control took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Applies control to main car based on pygame pressed keys.
         Will return True If ESCAPE is hit, otherwise False to end main loop.
@@ -340,8 +310,6 @@ class BasicSynchronousClient(object):
 
     @staticmethod
     def set_image(weak_self, img):
-    print('set_image took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Sets image coming from camera sensor.
         The self.capture flag is a mean of synchronization - once the flag is
@@ -354,8 +322,6 @@ class BasicSynchronousClient(object):
             self.capture = False
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Transforms image from camera sensor and blits it to main pygame display.
         """
@@ -369,8 +335,6 @@ class BasicSynchronousClient(object):
             display.blit(surface, (0, 0))
 
     def game_loop(self):
-    print('game_loop took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """
         Main program loop.
         """
@@ -420,7 +384,6 @@ class BasicSynchronousClient(object):
 
 
 def main():
-    start_time = time.time()
     """
     Initializes the client-side bounding box demo.
     """
@@ -432,6 +395,5 @@ def main():
         print('EXIT')
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
     main()

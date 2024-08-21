@@ -1,5 +1,3 @@
-import time
-
 #!/usr/bin/env python
 
 # Copyright (c) 2019 Computer Vision Center (CVC) at the Universitat Autonoma de
@@ -157,33 +155,25 @@ PIXELS_AHEAD_VEHICLE = 150
 
 
 def get_actor_display_name(actor, truncate=250):
-    start_time = time.time()
     name = ' '.join(actor.type_id.replace('_', '.').title().split('.')[1:])
     return (name[:truncate - 1] + u'\u2026') if len(name) > truncate else name
 
 
-    print('get_actor_display_name took', time.time() - start_time, 'seconds')
 class Util(object):
 
     @staticmethod
     def blits(destination_surface, source_surfaces, rect=None, blend_mode=0):
-    print('blits took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Function that renders the all the source surfaces in a destination source"""
         for surface in source_surfaces:
             destination_surface.blit(surface[0], surface[1], rect, blend_mode)
 
     @staticmethod
     def length(v):
-    print('length took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Returns the length of a vector"""
         return math.sqrt(v.x**2 + v.y**2 + v.z**2)
 
     @staticmethod
     def get_bounding_box(actor):
-    print('get_bounding_box took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Gets the bounding box corners of an actor in world space"""
         bb = actor.trigger_volume.extent
         corners = [carla.Location(x=-bb.x, y=-bb.y),
@@ -205,8 +195,6 @@ class FadingText(object):
     """Renders texts that fades out after some seconds that the user specifies"""
 
     def __init__(self, font, dim, pos):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Initializes variables such as text font, dimensions and position"""
         self.font = font
         self.dim = dim
@@ -215,8 +203,6 @@ class FadingText(object):
         self.surface = pygame.Surface(self.dim)
 
     def set_text(self, text, color=COLOR_WHITE, seconds=2.0):
-    print('set_text took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Sets the text, color and seconds until fade out"""
         text_texture = self.font.render(text, True, color)
         self.surface = pygame.Surface(self.dim)
@@ -225,16 +211,12 @@ class FadingText(object):
         self.surface.blit(text_texture, (10, 11))
 
     def tick(self, clock):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Each frame, it shows the displayed text for some specified seconds, if any"""
         delta_seconds = 1e-3 * clock.get_time()
         self.seconds_left = max(0.0, self.seconds_left - delta_seconds)
         self.surface.set_alpha(500.0 * self.seconds_left)
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """ Renders the text in its surface and its position"""
         display.blit(self.surface, self.pos)
 
@@ -246,8 +228,6 @@ class FadingText(object):
 
 class HelpText(object):
     def __init__(self, font, width, height):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Renders the help text that shows the controls for using no rendering mode"""
         lines = __doc__.split('\n')
         self.font = font
@@ -263,14 +243,10 @@ class HelpText(object):
         self.surface.set_alpha(220)
 
     def toggle(self):
-    print('toggle took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Toggles display of help text"""
         self._render = not self._render
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Renders the help text, if enabled"""
         if self._render:
             display.blit(self.surface, self.pos)
@@ -285,8 +261,6 @@ class HUD (object):
     """Class encharged of rendering the HUD that displays information about the world and the hero vehicle"""
 
     def __init__(self, name, width, height):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Initializes default HUD params and content data parameters that will be displayed"""
         self.name = name
         self.dim = (width, height)
@@ -294,13 +268,9 @@ class HUD (object):
         self._init_data_params()
 
     def start(self):
-    print('start took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Does nothing since it does not need to use other modules"""
 
     def _init_hud_params(self):
-    print('_init_hud_params took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Initialized visual parameters such as font text and size"""
         font_name = 'courier' if os.name == 'nt' else 'mono'
         fonts = [x for x in pygame.font.get_fonts() if font_name in x]
@@ -315,34 +285,24 @@ class HUD (object):
             (self.dim[0], 40), (0, self.dim[1] - 40))
 
     def _init_data_params(self):
-    print('_init_data_params took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Initializes the content data structures"""
         self.show_info = True
         self.show_actor_ids = False
         self._info_text = {}
 
     def notification(self, text, seconds=2.0):
-    print('notification took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Shows fading texts for some specified seconds"""
         self._notifications.set_text(text, seconds=seconds)
 
     def tick(self, clock):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Updated the fading texts each frame"""
         self._notifications.tick(clock)
 
     def add_info(self, title, info):
-    print('add_info took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Adds a block of information in the left HUD panel of the visualizer"""
         self._info_text[title] = info
 
     def render_vehicles_ids(self, vehicle_id_surface, list_actors, world_to_pixel, hero_actor, hero_transform):
-    print('render_vehicles_ids took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """When flag enabled, it shows the IDs of the vehicles that are spawned in the world. Depending on the vehicle type,
         it will render it in different colors"""
 
@@ -370,8 +330,6 @@ class HUD (object):
         return vehicle_id_surface
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """If flag enabled, it renders all the information regarding the left panel of the visualizer"""
         if self.show_info:
             info_surface = pygame.Surface((240, self.dim[1]))
@@ -428,11 +386,7 @@ class TrafficLightSurfaces(object):
     """Holds the surfaces (scaled and rotated) for painting traffic lights"""
 
     def __init__(self):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         def make_surface(tl):
-    print('make_surface took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """Draws a traffic light, which is composed of a dark background surface with 3 circles that indicate its color depending on the state"""
             w = 40
             surface = pygame.Surface((w, 3 * w), pygame.SRCALPHA)
@@ -462,8 +416,6 @@ class TrafficLightSurfaces(object):
         self.surfaces = dict(self._original_surfaces)
 
     def rotozoom(self, angle, scale):
-    print('rotozoom took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Rotates and scales the traffic light surface"""
         for key, surface in self._original_surfaces.items():
             self.surfaces[key] = pygame.transform.rotozoom(surface, angle, scale)
@@ -479,8 +431,6 @@ class MapImage(object):
     of a Carla town has not changed, it will read and use the stored image if it was rendered in a previous execution"""
 
     def __init__(self, carla_world, carla_map, pixels_per_meter, show_triggers, show_connections, show_spawn_points):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """ Renders the map image generated based on the world, its map and additional flags that provide extra information about the road network"""
         self._pixels_per_meter = pixels_per_meter
         self.scale = 1.0
@@ -551,15 +501,11 @@ class MapImage(object):
         self.surface = self.big_map_surface
 
     def draw_road_map(self, map_surface, carla_world, carla_map, world_to_pixel, world_to_pixel_width):
-    print('draw_road_map took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Draws all the roads, including lane markings, arrows and traffic signs"""
         map_surface.fill(COLOR_ALUMINIUM_4)
         precision = 0.05
 
         def lane_marking_color_to_tango(lane_marking_color):
-    print('lane_marking_color_to_tango took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """Maps the lane marking color enum specified in PythonAPI to a Tango Color"""
             tango_color = COLOR_BLACK
 
@@ -581,15 +527,11 @@ class MapImage(object):
             return tango_color
 
         def draw_solid_line(surface, color, closed, points, width):
-    print('draw_solid_line took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """Draws solid lines in a surface given a set of points, width and color"""
             if len(points) >= 2:
                 pygame.draw.lines(surface, color, closed, points, width)
 
         def draw_broken_line(surface, color, closed, points, width):
-    print('draw_broken_line took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """Draws broken lines in a surface given a set of points, width and color"""
             # Select which lines are going to be rendered from the set of lines
             broken_lines = [x for n, x in enumerate(zip(*(iter(points),) * 20)) if n % 3 == 0]
@@ -599,8 +541,6 @@ class MapImage(object):
                 pygame.draw.lines(surface, color, closed, line, width)
 
         def get_lane_markings(lane_marking_type, lane_marking_color, waypoints, sign):
-    print('get_lane_markings took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """For multiple lane marking types (SolidSolid, BrokenSolid, SolidBroken and BrokenBroken), it converts them
              as a combination of Broken and Solid lines"""
             margin = 0.25
@@ -626,8 +566,6 @@ class MapImage(object):
             return [(carla.LaneMarkingType.NONE, carla.LaneMarkingColor.Other, [])]
 
         def draw_lane(surface, lane, color):
-    print('draw_lane took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """Renders a single lane in a surface and with a specified color"""
             for side in lane:
                 lane_left_side = [lateral_shift(w.transform, -w.lane_width * 0.5) for w in side]
@@ -641,8 +579,6 @@ class MapImage(object):
                     pygame.draw.polygon(surface, color, polygon)
 
         def draw_lane_marking(surface, waypoints):
-    print('draw_lane_marking took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """Draws the left and right side of lane markings"""
             # Left Side
             draw_lane_marking_single_side(surface, waypoints[0], -1)
@@ -651,8 +587,6 @@ class MapImage(object):
             draw_lane_marking_single_side(surface, waypoints[1], 1)
 
         def draw_lane_marking_single_side(surface, waypoints, sign):
-    print('draw_lane_marking_single_side took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """Draws the lane marking given a set of waypoints and decides whether drawing the right or left side of
             the waypoint based on the sign parameter"""
             lane_marking = None
@@ -712,8 +646,6 @@ class MapImage(object):
                     draw_broken_line(surface, markings[1], False, markings[2], 2)
 
         def draw_arrow(surface, transform, color=COLOR_ALUMINIUM_2):
-    print('draw_arrow took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """ Draws an arrow with a specified color given a transform"""
             transform.rotation.yaw += 180
             forward = transform.get_forward_vector()
@@ -729,8 +661,6 @@ class MapImage(object):
             pygame.draw.lines(surface, color, False, [world_to_pixel(x) for x in [left, start, right]], 4)
 
         def draw_traffic_signs(surface, font_surface, actor, color=COLOR_ALUMINIUM_2, trigger_color=COLOR_PLUM_0):
-    print('draw_traffic_signs took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """Draw stop traffic signs and its bounding box if enabled"""
             transform = actor.get_transform()
             waypoint = carla_map.get_waypoint(transform.location)
@@ -759,8 +689,6 @@ class MapImage(object):
                 pygame.draw.lines(surface, trigger_color, True, corners, 2)
 
         # def draw_crosswalk(surface, transform=None, color=COLOR_ALUMINIUM_2):
-    print('draw_crosswalk took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         #     """Given two points A and B, draw white parallel lines from A to B"""
         #     a = carla.Location(0.0, 0.0, 0.0)
         #     b = carla.Location(10.0, 10.0, 0.0)
@@ -792,15 +720,11 @@ class MapImage(object):
         #         current_length += (line_width + space_between_lines) * 2
 
         def lateral_shift(transform, shift):
-    print('lateral_shift took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """Makes a lateral shift of the forward vector of a transform"""
             transform.rotation.yaw += 90
             return transform.location + shift * transform.get_forward_vector()
 
         def draw_topology(carla_topology, index):
-    print('draw_topology took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             """ Draws traffic signs and the roads network with sidewalks, parking and shoulders by generating waypoints"""
             topology = [x[index] for x in carla_topology]
             topology = sorted(topology, key=lambda w: w.transform.location.z)
@@ -897,8 +821,6 @@ class MapImage(object):
             dist = 1.5
 
             def to_pixel(wp): return world_to_pixel(wp.transform.location)
-    print('to_pixel took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             for wp in carla_map.generate_waypoints(dist):
                 col = (0, 255, 255) if wp.is_junction else (0, 255, 0)
                 for nxt in wp.next(dist):
@@ -936,22 +858,16 @@ class MapImage(object):
             draw_traffic_signs(map_surface, yield_font_surface, ts_yield, trigger_color=COLOR_ORANGE_1)
 
     def world_to_pixel(self, location, offset=(0, 0)):
-    print('world_to_pixel took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Converts the world coordinates to pixel coordinates"""
         x = self.scale * self._pixels_per_meter * (location.x - self._world_offset[0])
         y = self.scale * self._pixels_per_meter * (location.y - self._world_offset[1])
         return [int(x - offset[0]), int(y - offset[1])]
 
     def world_to_pixel_width(self, width):
-    print('world_to_pixel_width took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Converts the world units to pixel units"""
         return int(self.scale * self._pixels_per_meter * width)
 
     def scale_map(self, scale):
-    print('scale_map took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Scales the map surface"""
         if scale != self.scale:
             self.scale = scale
@@ -963,8 +879,6 @@ class World(object):
     """Class that contains all the information of a carla world that is running on the server side"""
 
     def __init__(self, name, args, timeout):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         self.client = None
         self.name = name
         self.args = args
@@ -1006,8 +920,6 @@ class World(object):
         self.actors_surface = None
 
     def _get_data_from_carla(self):
-    print('_get_data_from_carla took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Retrieves the data from the server side"""
         try:
             self.client = carla.Client(self.args.host, self.args.port)
@@ -1026,8 +938,6 @@ class World(object):
             exit_game()
 
     def start(self, hud, input_control):
-    print('start took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Build the map image, stores the needed modules and prepares rendering in Hero Mode"""
         self.world, self.town_map = self._get_data_from_carla()
 
@@ -1086,8 +996,6 @@ class World(object):
         self.world.on_tick(lambda timestamp: World.on_world_tick(weak_self, timestamp))
 
     def select_hero_actor(self):
-    print('select_hero_actor took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Selects only one hero actor if there are more than one. If there are not any, it will spawn one."""
         hero_vehicles = [actor for actor in self.world.get_actors()
                          if 'vehicle' in actor.type_id and actor.attributes['role_name'] == 'hero']
@@ -1098,8 +1006,6 @@ class World(object):
             self._spawn_hero()
 
     def _spawn_hero(self):
-    print('_spawn_hero took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Spawns the hero actor when the script runs"""
         # Get a random blueprint.
         blueprint = random.choice(self.world.get_blueprint_library().filter(self.args.filter))
@@ -1118,8 +1024,6 @@ class World(object):
         self.spawned_hero = self.hero_actor
 
     def tick(self, clock):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Retrieves the actors for Hero and Map modes and updates de HUD based on that"""
         actors = self.world.get_actors()
 
@@ -1132,8 +1036,6 @@ class World(object):
         self.update_hud_info(clock)
 
     def update_hud_info(self, clock):
-    print('update_hud_info took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Updates the HUD info regarding simulation, hero mode and whether there is a traffic light affecting the hero actor"""
 
         hero_mode_text = []
@@ -1180,8 +1082,6 @@ class World(object):
 
     @staticmethod
     def on_world_tick(weak_self, timestamp):
-    print('on_world_tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Updates the server tick"""
         self = weak_self()
         if not self:
@@ -1192,8 +1092,6 @@ class World(object):
         self.simulation_time = timestamp.elapsed_seconds
 
     def _show_nearby_vehicles(self, vehicles):
-    print('_show_nearby_vehicles took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Shows nearby vehicles of the hero actor"""
         info_text = []
         if self.hero_actor is not None and len(vehicles) > 1:
@@ -1201,8 +1099,6 @@ class World(object):
             vehicle_list = [x[0] for x in vehicles if x[0].id != self.hero_actor.id]
 
             def distance(v): return location.distance(v.get_location())
-    print('distance took', time.time() - start_time, 'seconds')
-    start_time = time.time()
             for n, vehicle in enumerate(sorted(vehicle_list, key=distance)):
                 if n > 15:
                     break
@@ -1211,8 +1107,6 @@ class World(object):
         self._hud.add_info('NEARBY VEHICLES', info_text)
 
     def _split_actors(self):
-    print('_split_actors took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Splits the retrieved actors by type id"""
         vehicles = []
         traffic_lights = []
@@ -1233,8 +1127,6 @@ class World(object):
         return (vehicles, traffic_lights, speed_limits, walkers)
 
     def _render_traffic_lights(self, surface, list_tl, world_to_pixel):
-    print('_render_traffic_lights took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Renders the traffic lights and shows its triggers and bounding boxes if flags are enabled"""
         self.affected_traffic_light = None
 
@@ -1266,8 +1158,6 @@ class World(object):
             surface.blit(srf, srf.get_rect(center=pos))
 
     def _render_speed_limits(self, surface, list_sl, world_to_pixel, world_to_pixel_width):
-    print('_render_speed_limits took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Renders the speed limits by drawing two concentric circles (outer is red and inner white) and a speed limit text"""
 
         font_size = world_to_pixel_width(2)
@@ -1305,8 +1195,6 @@ class World(object):
                 surface.blit(font_surface, (x - radius / 2, y - radius / 2))
 
     def _render_walkers(self, surface, list_w, world_to_pixel):
-    print('_render_walkers took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Renders the walkers' bounding boxes"""
         for w in list_w:
             color = COLOR_PLUM_0
@@ -1324,8 +1212,6 @@ class World(object):
             pygame.draw.polygon(surface, color, corners)
 
     def _render_vehicles(self, surface, list_v, world_to_pixel):
-    print('_render_vehicles took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Renders the vehicles' bounding boxes"""
         for v in list_v:
             color = COLOR_SKY_BLUE_0
@@ -1347,8 +1233,6 @@ class World(object):
             pygame.draw.lines(surface, color, False, corners, int(math.ceil(4.0 * self.map_image.scale)))
 
     def render_actors(self, surface, vehicles, traffic_lights, speed_limits, walkers):
-    print('render_actors took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Renders all the actors"""
         # Static actors
         self._render_traffic_lights(surface, [tl[0] for tl in traffic_lights], self.map_image.world_to_pixel)
@@ -1360,16 +1244,12 @@ class World(object):
         self._render_walkers(surface, walkers, self.map_image.world_to_pixel)
 
     def clip_surfaces(self, clipping_rect):
-    print('clip_surfaces took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Used to improve perfomance. Clips the surfaces in order to render only the part of the surfaces that are going to be visible"""
         self.actors_surface.set_clip(clipping_rect)
         self.vehicle_id_surface.set_clip(clipping_rect)
         self.result_surface.set_clip(clipping_rect)
 
     def _compute_scale(self, scale_factor):
-    print('_compute_scale took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Based on the mouse wheel and mouse position, it will compute the scale and move the map so that it is zoomed in or out based on mouse position"""
         m = self._input.mouse_pos
 
@@ -1392,8 +1272,6 @@ class World(object):
         self.map_image.scale_map(scale_factor)
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Renders the map and all the actors in hero and map mode"""
         if self.actors_with_transforms is None:
             return
@@ -1479,8 +1357,6 @@ class World(object):
                                                translation_offset[1]))
 
     def destroy(self):
-    print('destroy took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Destroy the hero actor when class instance is destroyed"""
         if self.spawned_hero is not None:
             self.spawned_hero.destroy()
@@ -1494,8 +1370,6 @@ class InputControl(object):
     """Class that handles input received such as keyboard and mouse."""
 
     def __init__(self, name):
-    print('__init__ took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Initializes input member variables when instance is created."""
         self.name = name
         self.mouse_pos = (0, 0)
@@ -1511,8 +1385,6 @@ class InputControl(object):
         self._world = None
 
     def start(self, hud, world):
-    print('start took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Assigns other initialized modules that input module needs."""
         self._hud = hud
         self._world = world
@@ -1520,19 +1392,13 @@ class InputControl(object):
         self._hud.notification("Press 'H' or '?' for help.", seconds=4.0)
 
     def render(self, display):
-    print('render took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Does nothing. Input module does not need render anything."""
 
     def tick(self, clock):
-    print('tick took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Executed each frame. Calls method for parsing input."""
         self.parse_input(clock)
 
     def _parse_events(self):
-    print('_parse_events took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Parses input events. These events are executed only once when pressing a key."""
         self.mouse_pos = pygame.mouse.get_pos()
         for event in pygame.event.get():
@@ -1591,8 +1457,6 @@ class InputControl(object):
                         self.wheel_offset = 0.1
 
     def _parse_keys(self, milliseconds):
-    print('_parse_keys took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Parses keyboard input when keys are pressed"""
         keys = pygame.key.get_pressed()
         self.control.throttle = 1.0 if keys[K_UP] or keys[K_w] else 0.0
@@ -1609,8 +1473,6 @@ class InputControl(object):
         self.control.hand_brake = keys[K_SPACE]
 
     def _parse_mouse(self):
-    print('_parse_mouse took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Parses mouse input"""
         if pygame.mouse.get_pressed()[0]:
             x, y = pygame.mouse.get_pos()
@@ -1619,8 +1481,6 @@ class InputControl(object):
             self.mouse_pos = (x, y)
 
     def parse_input(self, clock):
-    print('parse_input took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Parses the input, which is classified in keyboard events and mouse"""
         self._parse_events()
         self._parse_mouse()
@@ -1633,8 +1493,6 @@ class InputControl(object):
 
     @staticmethod
     def _is_quit_shortcut(key):
-    print('_is_quit_shortcut took', time.time() - start_time, 'seconds')
-    start_time = time.time()
         """Returns True if one of the specified keys are pressed"""
         return (key == K_ESCAPE) or (key == K_q and pygame.key.get_mods() & KMOD_CTRL)
 
@@ -1645,7 +1503,6 @@ class InputControl(object):
 
 
 def game_loop(args):
-    start_time = time.time()
     """Initialized, Starts and runs all the needed modules for No Rendering Mode"""
     try:
         # Init Pygame
@@ -1699,21 +1556,17 @@ def game_loop(args):
             world.destroy()
 
 
-    print('game_loop took', time.time() - start_time, 'seconds')
 def exit_game():
-    start_time = time.time()
     """Shuts down program and PyGame"""
     pygame.quit()
     sys.exit()
 
-    print('exit_game took', time.time() - start_time, 'seconds')
 # ==============================================================================
 # -- Main --------------------------------------------------------------------
 # ==============================================================================
 
 
 def main():
-    start_time = time.time()
     """Parses the arguments received from commandline and runs the game loop"""
 
     # Define arguments that will be received and parsed
@@ -1783,6 +1636,5 @@ def main():
     game_loop(args)
 
 
-    print('main took', time.time() - start_time, 'seconds')
 if __name__ == '__main__':
     main()

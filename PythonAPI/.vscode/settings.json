@@ -1,0 +1,8 @@
+{
+    "cSpell.words": [
+        "pygame"
+    ],
+    "python.analysis.extraPaths": [
+        "./carla"
+    ]
+}

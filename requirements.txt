@@ -1,5 +1,0 @@
-tensorflow-gpu
-keras
-matplotlib
-numpy
-cv2
